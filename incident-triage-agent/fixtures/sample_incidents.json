@@ -1,0 +1,29 @@
+[
+  {
+    "name": "checkout_pool_exhaustion",
+    "description": "Clean case: matches a previously-solved incident, should auto-remediate.",
+    "payload": {
+      "service": "checkout-service",
+      "alert_type": "high_error_rate",
+      "description": "Spike in 5xx errors and DB connection timeouts on checkout-service."
+    }
+  },
+  {
+    "name": "recommendation_oom_loop",
+    "description": "Should escalate: recurring OOM crash loop, runbook explicitly flags this as not-safe-to-automate.",
+    "payload": {
+      "service": "recommendation-service",
+      "alert_type": "oom_crash_loop",
+      "description": "recommendation-service pod repeatedly OOMKilled, memory usage pinned near 100%."
+    }
+  },
+  {
+    "name": "auth_latency_warning",
+    "description": "Borderline case: rising latency, no errors yet, auth traffic is high blast-radius -> should escalate.",
+    "payload": {
+      "service": "auth-service",
+      "alert_type": "high_latency",
+      "description": "p95 latency on /oauth/token climbing steadily over the last 5 minutes."
+    }
+  }
+]

@@ -1,0 +1,8 @@
+services:
+  support-agent:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:?Set ANTHROPIC_API_KEY in your environment or a .env file}
+      - ORDER_SERVICE_PASSWORD=${ORDER_SERVICE_PASSWORD:-service-secret}

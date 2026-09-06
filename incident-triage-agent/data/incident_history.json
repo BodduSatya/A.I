@@ -1,0 +1,26 @@
+[
+  {
+    "date": "2026-06-14",
+    "service": "checkout-service",
+    "alert_type": "high_error_rate",
+    "summary": "DB connection pool exhaustion during a flash sale traffic spike.",
+    "resolution": "Restarted the connection pool and temporarily raised max pool size.",
+    "outcome": "Resolved in 6 minutes, no data loss."
+  },
+  {
+    "date": "2026-03-02",
+    "service": "checkout-service",
+    "alert_type": "high_error_rate",
+    "summary": "Connection pool exhaustion caused by a slow downstream payment provider.",
+    "resolution": "Restarting the pool alone did not help; required a circuit breaker fix in code.",
+    "outcome": "Required engineering follow-up, not a clean auto-fix."
+  },
+  {
+    "date": "2026-07-20",
+    "service": "recommendation-service",
+    "alert_type": "oom_crash_loop",
+    "summary": "Feature-vector cache grew unbounded and OOM-killed the pod repeatedly.",
+    "resolution": "Rolled back to previous image; root cause was a cache eviction bug.",
+    "outcome": "Required a rollback, not something safe to automate blindly."
+  }
+]

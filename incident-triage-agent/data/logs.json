@@ -1,0 +1,24 @@
+{
+  "checkout-service": [
+    {"ts": "2026-08-08T09:12:01Z", "level": "INFO", "message": "Handling checkout request for order 88213"},
+    {"ts": "2026-08-08T09:12:03Z", "level": "WARN", "message": "DB connection pool at 92% utilization"},
+    {"ts": "2026-08-08T09:12:07Z", "level": "ERROR", "message": "Timeout acquiring connection from pool (waited 5000ms)"},
+    {"ts": "2026-08-08T09:12:08Z", "level": "ERROR", "message": "Timeout acquiring connection from pool (waited 5000ms)"},
+    {"ts": "2026-08-08T09:12:09Z", "level": "ERROR", "message": "Timeout acquiring connection from pool (waited 5000ms)"},
+    {"ts": "2026-08-08T09:12:10Z", "level": "WARN", "message": "DB connection pool at 100% utilization"},
+    {"ts": "2026-08-08T09:12:12Z", "level": "ERROR", "message": "Checkout request for order 88214 failed: connection pool exhausted"},
+    {"ts": "2026-08-08T09:12:15Z", "level": "ERROR", "message": "Checkout request for order 88215 failed: connection pool exhausted"}
+  ],
+  "auth-service": [
+    {"ts": "2026-08-08T09:05:00Z", "level": "INFO", "message": "Token issued for user 4471"},
+    {"ts": "2026-08-08T09:05:12Z", "level": "INFO", "message": "Token issued for user 5521"},
+    {"ts": "2026-08-08T09:06:00Z", "level": "WARN", "message": "Elevated latency on /oauth/token: 1200ms (p95)"},
+    {"ts": "2026-08-08T09:06:30Z", "level": "WARN", "message": "Elevated latency on /oauth/token: 1450ms (p95)"}
+  ],
+  "recommendation-service": [
+    {"ts": "2026-08-08T08:55:00Z", "level": "ERROR", "message": "OutOfMemoryError in feature-vector cache"},
+    {"ts": "2026-08-08T08:55:05Z", "level": "ERROR", "message": "Pod restarted by kubelet (OOMKilled)"},
+    {"ts": "2026-08-08T09:01:00Z", "level": "ERROR", "message": "OutOfMemoryError in feature-vector cache"},
+    {"ts": "2026-08-08T09:01:05Z", "level": "ERROR", "message": "Pod restarted by kubelet (OOMKilled)"}
+  ]
+}

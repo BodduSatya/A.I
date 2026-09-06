@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Incident Triage Agent — Dashboard</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 16px; margin-top: 36px; }
+  button { cursor: pointer; padding: 6px 14px; border-radius: 6px; border: 1px solid #ccc; background: #f5f5f5; }
+  button.primary { background: #1a1a1a; color: white; border: none; }
+  select, input { padding: 6px; border-radius: 6px; border: 1px solid #ccc; }
+  pre { background: #f7f7f7; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+  .card { border: 1px solid #e2e2e2; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .status-awaiting { color: #b45309; font-weight: 600; }
+  .status-resolved { color: #15803d; font-weight: 600; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <h1>🚨 Incident Triage Agent</h1>
+  <p>Trigger a mock incident, watch the agent graph diagnose it, and approve/deny any escalated plan.</p>
+
+  <h2>Trigger a scenario</h2>
+  <div class="row">
+    <select id="scenario"></select>
+    <button class="primary" onclick="trigger()">Trigger incident</button>
+  </div>
+
+  <h2>Incidents</h2>
+  <div id="incidents"></div>
+
+  <script>
+    const scenarios = [
+      { name: "checkout_pool_exhaustion", service: "checkout-service", alert_type: "high_error_rate",
+        description: "Spike in 5xx errors and DB connection timeouts on checkout-service." },
+      { name: "recommendation_oom_loop", service: "recommendation-service", alert_type: "oom_crash_loop",
+        description: "recommendation-service pod repeatedly OOMKilled, memory usage pinned near 100%." },
+      { name: "auth_latency_warning", service: "auth-service", alert_type: "high_latency",
+        description: "p95 latency on /oauth/token climbing steadily over the last 5 minutes." }
+    ];
+
+    const sel = document.getElementById("scenario");
+    scenarios.forEach((s, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = s.name;
+      sel.appendChild(opt);
+    });
+
+    async function trigger() {
+      const s = scenarios[sel.value];
+      const res = await fetch("/incidents/trigger", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ service: s.service, alert_type: s.alert_type, description: s.description })
+      });
+      await res.json();
+      loadIncidents();
+    }
+
+    async function resume(id, decision) {
+      await fetch(`/incidents/${id}/resume`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision })
+      });
+      loadIncidents();
+    }
+
+    async function loadIncidents() {
+      const res = await fetch("/incidents");
+      const list = await res.json();
+      const container = document.getElementById("incidents");
+      container.innerHTML = "";
+      for (const item of list) {
+        const detailRes = await fetch(`/incidents/${item.incident_id}`);
+        const detail = await detailRes.json();
+        const state = detail.state || {};
+        const statusClass = detail.status === "awaiting_human" ? "status-awaiting" : "status-resolved";
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="row">
+            <strong>${item.incident_id}</strong> — ${item.service} / ${item.alert_type}
+            <span class="${statusClass}">${detail.status}</span>
+          </div>
+          <pre>${JSON.stringify(state, null, 2)}</pre>
+          ${detail.status === "awaiting_human" ? `
+            <div class="row">
+              <button class="primary" onclick="resume('${item.incident_id}','approved')">Approve</button>
+              <button onclick="resume('${item.incident_id}','denied')">Deny</button>
+            </div>` : ""}
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    loadIncidents();
+    setInterval(loadIncidents, 5000);
+  </script>
+</body>
+</html>

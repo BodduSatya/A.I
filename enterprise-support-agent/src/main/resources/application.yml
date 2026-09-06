@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: enterprise-support-agent
+
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      chat:
+        options:
+          model: claude-sonnet-4-6
+          temperature: 0.3
+          max-tokens: 1024
+    embedding:
+      transformer:
+        onnx:
+          model-uri: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/model.onnx
+        tokenizer:
+          uri: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/raw/main/tokenizer.json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+server:
+  port: 8080
+
+# Internal mock order-management service. In production this would be a
+# separate deployed service reached via a real base-url / service discovery;
+# here it's mounted in the same app under /internal/orders for a
+# zero-infra demo. See MockOrderController + OrderServiceClient.
+support-agent:
+  order-service:
+    base-url: http://localhost:8080/internal/orders
+    # Service-to-service credentials this app uses to call the downstream
+    # order-management service - NOT the end-user's own credentials.
+    # See SecurityConfig for why that separation matters.
+    username: support-agent-service
+    password: ${ORDER_SERVICE_PASSWORD:service-secret}
+
+logging:
+  level:
+    com.example.supportagent: INFO
+    org.springframework.ai: INFO

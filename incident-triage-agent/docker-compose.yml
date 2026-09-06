@@ -1,0 +1,11 @@
+services:
+  triage-agent:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - TRIAGE_MODEL=${TRIAGE_MODEL:-claude-sonnet-4-6}
+      - TRIAGE_MOCK_LLM=${TRIAGE_MOCK_LLM:-true}
+    volumes:
+      - ./data:/app/data

@@ -1,0 +1,15 @@
+{
+  "checkout-service": {
+    "db_connection_pool_utilization_pct": [55, 61, 74, 88, 92, 97, 100, 100],
+    "http_5xx_rate": [0.001, 0.001, 0.004, 0.02, 0.08, 0.15, 0.21, 0.24],
+    "p95_latency_ms": [120, 130, 210, 480, 900, 1500, 2100, 2400]
+  },
+  "auth-service": {
+    "p95_latency_ms": [180, 190, 400, 900, 1200, 1450],
+    "http_5xx_rate": [0.0, 0.0, 0.001, 0.002, 0.003, 0.004]
+  },
+  "recommendation-service": {
+    "memory_usage_pct": [70, 78, 85, 95, 99, 100, 40, 96, 99, 100],
+    "pod_restarts_last_hour": [0, 0, 0, 0, 1, 1, 1, 1, 2, 2]
+  }
+}
